@@ -6,7 +6,7 @@ object MacropolisTest extends App {
   import Macropolis._
 
   class A(val b: Boolean, val s: String) {
-    override def equals(any: Any): Boolean = mequals(this, any, b, s)
+    override def equals(other: Any): Boolean = mequals(this, other, b, s)
     override def hashCode: Int = mhash(b, s)
   }
 
