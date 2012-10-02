@@ -2,8 +2,8 @@ package macropolis
 
 import language.experimental.macros
 
-object MacropolisTest extends App {
-  import Macropolis._
+object EqualizerTest extends App {
+  import Equalizer._
 
   class A(val b: Boolean, val s: String) {
     override def equals(other: Any): Boolean = mequals(this, other, b, s)
@@ -22,5 +22,3 @@ object MacropolisTest extends App {
   println(b.hashCode)
   println(c.hashCode)
 }
-
-

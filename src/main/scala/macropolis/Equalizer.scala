@@ -1,14 +1,9 @@
 package macropolis
 
+import reflect.macros.Context
 import language.experimental.macros
-import language.implicitConversions
-import scala.reflect.macros.Context
-import collection.mutable.ListBuffer
-import collection.mutable.Stack
-import scala.reflect._
 
-object Macropolis {
-
+object Equalizer {
   def mequals[T <: AnyRef](me: T, other: Any, firstField: Any, fields: Any*): Boolean = macro mequals_impl[T]
 
   def mequals_impl[T <: AnyRef :c.AbsTypeTag](c: Context)(me: c.Expr[T], other: c.Expr[Any], firstField: c.Expr[Any], fields: c.Expr[Any]*): c.Expr[Boolean] = {
@@ -37,7 +32,7 @@ object Macropolis {
       val meType = runtimeMirror.classSymbol(me.splice.getClass).typeSignature
 
       other.splice match {
-        case that: T if otherType <:< meType => (me.splice eq that) || compareFields.splice // here I would like to pass 'that: T' to compareFields
+        case other: T if otherType <:< meType => (me.splice eq other) || compareFields.splice // here I would like to pass 'other: T' to compareFields
         case _ => false
       }
     }
