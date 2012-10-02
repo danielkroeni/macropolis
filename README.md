@@ -5,7 +5,7 @@ Scala macro playground
 
 ## Equalizer
 
-Automatically generates proper equals and hashCode methods.
+Automatically generates proper `equals` and `hashCode` methods.
 
 ```
 import Equalizer._
@@ -31,6 +31,52 @@ class A(val b: Boolean, val s: String) {
     ) + s.hashCode
 }
 ```
+
+
+## PropertyChecker
+
+Checks whether property keys are defined in a config file and warns at compile time:
+
+config.properties
+```
+my.property.key = hello
+```
+
+```
+import PropertyChecker._
+
+val okKey = p"my.property.key"
+println(okKey)                   // prints my.property.key
+
+val nokKey = p"my.property.hey"
+println(nokKey)                  // prints my.property.key
+
+```
+
+Compiler output:
+```
+[warn] /home/dk/macropolis/src/test/scala/macropolis/PropertyCheckerTest.scala:8: Key my.property.hey not found in config.properties
+[warn]   val nok = p"my.property.hey"
+[warn]             ^
+[warn] one warning found
+```
+
+If you get the following warning it means that the compiler can not find the file `config.properties` on the classpath:
+```
+[warn] /home/dk/macropolis/src/test/scala/macropolis/PropertyCheckerTest.scala:6: Unable to load property file config.properties. Be sure the config file is on the compile classpath.
+[warn]   val ok = p"my.property.key"
+[warn]            ^
+```
+
+To make this working in xsbt the classpath needs to be extend to contain the config file.
+In this project I added the following line to its build.sbt:
+```
+unmanagedClasspath in Test <+= (baseDirectory) map { bd => Attributed.blank(bd/"src"/"test"/"resources") }
+```
+
+### Notes
+* Currently the name of the property file is hardcoded to `config.properties`.
+* Would it make sense to have `v"my.property.key"` which statically resolves the `value` associated with the given key?
 
 
 ## ExternalInternalDSL
@@ -85,7 +131,7 @@ Compiler error:
 ```
 
 ### Semantic Checks
-This example shows multiple semantic errors at compile:
+This example demonstrates multiple semantic errors at compile time:
 
 ```
 import InternalExternalDSL._
@@ -115,5 +161,6 @@ Compiler error:
 [error] (test:compile) Compilation failed
 ```
 
-Just for fun the implementation avoids parsing the string again at runtime but serializes the constructed AST into a string literal which is then deserialized at runtime.
+Just for fun the implementation avoids parsing the string again at runtime:
+It serializes the constructed AST at compile time into a string literal which is then deserialized at runtime.
 

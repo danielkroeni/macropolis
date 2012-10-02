@@ -10,4 +10,4 @@ libraryDependencies <+= (scalaVersion)("org.scala-lang" % "scala-reflect" % _)
 
 fork in run := true
 
-scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")//, "-Xlog-free-terms")
+unmanagedClasspath in Test <+= (baseDirectory) map { bd => Attributed.blank(bd/"src"/"test"/"resources") }
